@@ -13,6 +13,15 @@ from matplotlib import rcParams
 from matplotlib import colors
 import seaborn as sb
 
+st.write("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Arimo');
+html, body, [class*="css"]  {
+   font-family: 'Arimo';
+}
+</style>
+""", unsafe_allow_html=True)
+
 ######################
 # Page Title
 ######################
@@ -34,14 +43,22 @@ gene_id = pd.DataFrame(columns=['gene'])
 gene_id['gene'] = list(ge_df.index)
 gene_id.head()
 adata.var = gene_id
+adata.var_names = gene_id['gene'].tolist()
 
 from matplotlib.pyplot import rc_context
 st.set_option('deprecation.showPyplotGlobalUse', False)
 st.subheader('Visualization by PCA')
-sc.pp.pca(adata, n_comps=50, use_highly_variable=False, svd_solver='arpack')
-with rc_context({'figure.figsize': (10, 10)}):
-    sc.pl.pca_scatter(adata)
-    st.pyplot()
+
+st.markdown('<div style="text-align: justify;"> PCA is method \
+</div>', unsafe_allow_html=True)
+
+pca_button = st.button("Run PCA analysis") # Give button a variable name
+if pca_button: # Make button a condition.
+    st.text("Start PCA analysis")
+    sc.pp.pca(adata, n_comps=50, use_highly_variable=False, svd_solver='arpack')
+    with rc_context({'figure.figsize': (10, 10)}):
+        sc.pl.pca_scatter(adata)
+        st.pyplot()
 
 st.subheader('Visualization by UMAP')
 # t-SNE
@@ -58,30 +75,36 @@ knn_n_pcs = 50 # Number of principal components to use for finding nearest neigh
 umap_min_dist = 0.3 
 umap_spread = 1.0
 # KNN graph
-sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=knn_n_pcs)
-# UMAP
-sc.tl.umap(adata, min_dist=umap_min_dist, spread=umap_spread)
-# Louvain clustering
-st.write('UMAP visualization with Louvain clustering')
-sc.tl.louvain(adata)
-with rc_context({'figure.figsize': (10, 10)}):
-# Plot
-    sc.pl.umap(adata, color=["louvain"],legend_loc='on data', legend_fontsize=10)
-    st.pyplot()
-
-# Leiden clustering
-st.write('UMAP visualization with Leiden clustering')
-sc.tl.leiden(adata)
-# Plot
-with rc_context({'figure.figsize': (10, 10)}):
-    sc.pl.umap(adata, color=["leiden"],legend_loc='on data', legend_fontsize=10)
-    st.pyplot()
+umap_button = st.button("Run UMAP analysis") # Give button a variable name
+if umap_button: # Make button a condition.
+    st.text("Start UMAP analysis")
+    sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=knn_n_pcs)
+    # UMAP
+    sc.tl.umap(adata, min_dist=umap_min_dist, spread=umap_spread)
+    # Louvain clustering
+    st.write('UMAP visualization with Louvain clustering')
+    sc.tl.louvain(adata)
+    with rc_context({'figure.figsize': (10, 10)}):
+    # Plot
+        sc.pl.umap(adata, color=["louvain"],legend_loc='on data', legend_fontsize=10)
+        st.pyplot()
+    # Leiden clustering
+    st.write('UMAP visualization with Leiden clustering')
+    sc.tl.leiden(adata)
+    # Plot
+    with rc_context({'figure.figsize': (10, 10)}):
+        sc.pl.umap(adata, color=["leiden"],legend_loc='on data', legend_fontsize=10)
+        st.pyplot()
 
 st.subheader('Visualization by t-SNE')
-sc.tl.tsne(adata, n_pcs=tsne_n_pcs)
-from sklearn.cluster import KMeans
-kmeans = KMeans(n_clusters=18, random_state=0).fit(adata.obsm['X_pca'])
-adata.obs['kmeans'] = kmeans.labels_.astype(str)
-with rc_context({'figure.figsize': (10, 10)}):
-    sc.pl.tsne(adata, color=["kmeans"])
-    st.pyplot()
+tsne_button = st.button("Run t-SNE analysis") # Give button a variable name
+if tsne_button: # Make button a condition.
+    st.text("Start t-SNE analysis")
+    sc.tl.tsne(adata, n_pcs=tsne_n_pcs)
+    from sklearn.cluster import KMeans
+    kmeans = KMeans(n_clusters=18, random_state=0).fit(adata.obsm['X_pca'])
+    adata.obs['kmeans'] = kmeans.labels_.astype(str)
+    with rc_context({'figure.figsize': (10, 10)}):
+        sc.pl.tsne(adata, color=["kmeans"])
+        st.pyplot()
+st.session_state['adata'] = adata

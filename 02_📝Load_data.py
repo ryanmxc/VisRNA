@@ -13,6 +13,16 @@ from matplotlib import rcParams
 from matplotlib import colors
 import seaborn as sb
 import os
+
+st.write("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Arimo');
+html, body, [class*="css"]  {
+   font-family: 'Arimo';
+}
+</style>
+""", unsafe_allow_html=True)
+
 ######################
 # Page Title
 ######################
@@ -39,27 +49,28 @@ use_example_file = st.sidebar.checkbox(
 
 # If CSV is not uploaded and checkbox is filled, use values from the example file
 # and pass them down to the next if block
-if use_example_file:
-    uploaded_file = './Data/LUAD-003-01-1A.gene.expression.matrix.tsv'
 
 st.header('Read scRNA-seq data using scanpy')
 
 #Load data
 if uploaded_file is not None:
-    print(uploaded_file)
     st.write("Using uploaded file")
-    ge_matrix = pd.read_csv(uploaded_file,sep='\t')
-    st.write(ge_matrix)
-    # ge_matrix = uploaded_file
+    ge_df = pd.read_csv(uploaded_file,sep='\t')
+
+elif use_example_file:
+    st.write("An example file was loaded")
+    ge_matrix = './Data/LUAD-003-01-1A_gene_expression_matrix.tsv'
+    ge_df = pd.read_csv(ge_matrix,sep='\t')
+ 
 else:
-    st.write("Example file was preloaded")
-    ge_matrix = './Data/LUAD-003-01-1A.gene.expression.matrix.tsv'
-adata = sc.read(ge_matrix, cache=True)
+    st.write("An example file was preloaded")
+    ge_matrix = './Data/LUAD-003-01-1A_gene_expression_matrix.tsv'
+    ge_df = pd.read_csv(ge_matrix,sep='\t')
+    
+adata = sc.AnnData(ge_df)
 adata = adata.transpose()
 cell_count = adata.X.shape[0]
 gene_count = adata.X.shape[1]
-ge_df = pd.read_csv(ge_matrix,sep='\t')
-ge_df.head()
 st.write('Number of cells in the data: ', cell_count)
 st.write('Number of genes in the data: ', gene_count)
 st.session_state['adata'] = adata
