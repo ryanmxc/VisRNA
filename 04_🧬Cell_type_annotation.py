@@ -31,28 +31,25 @@ html, body, [class*="css"]  {
 # Page Title
 ######################
 
-image = Image.open('./images/nsclc-logo.jpeg')
+image = Image.open('./images/cell-type-annotation.png')
 
 st.image(image, use_column_width=True)
-
-st.write("""
-# Cell type annotation and visualization.
-
-""")
-st.header('Cell type annotation')
 
 #Load data
 adata = st.session_state['adata']
 import celltypist
 from celltypist import models
 
-# Indeed, the `model` argument defaults to `Immune_All_Low.pkl`.
-model = models.Model.load(model = 'Human_Lung_Atlas.pkl')
-predictions = celltypist.annotate(adata, model = 'Human_Lung_Atlas.pkl', majority_voting = True)
-adata = predictions.to_adata()
 
-sc.tl.umap(adata)
-
-with rc_context({'figure.figsize': (10, 10)}):
-    sc.pl.umap(adata, color = ['majority_voting'], legend_loc = 'on data')
-    st.pyplot()
+st.subheader('Celltype annotation by CellTypist')
+ct_button = st.button("Click button to perform cell type annotation") # Give button a variable name
+if ct_button: # Make button a condition.
+   # Indeed, the `model` argument defaults to `Immune_All_Low.pkl`.
+   model = models.Model.load(model = 'Human_Lung_Atlas.pkl')
+   predictions = celltypist.annotate(adata, model = 'Human_Lung_Atlas.pkl', majority_voting = True)
+   adata = predictions.to_adata()
+   sc.tl.umap(adata)
+   with rc_context({'figure.figsize': (10, 10)}):
+      st.text("Celltype annotation result is here")
+      sc.pl.umap(adata, color = ['majority_voting'], legend_loc = 'on data')
+      st.pyplot()

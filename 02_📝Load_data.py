@@ -4,15 +4,9 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
-import pickle
 from PIL import Image
 import scanpy as sc
-import scipy as sp
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
-from matplotlib import colors
-import seaborn as sb
-import os
+import plotly.express as px
 
 st.write("""
 <style>
@@ -27,22 +21,16 @@ html, body, [class*="css"]  {
 # Page Title
 ######################
 
-print(os.getcwd())
-image = Image.open('./images/nsclc-logo.jpeg')
-
+image = Image.open('./images/load-data.png')
 st.image(image, use_column_width=True)
-
-st.write("""
-## load your data one the left panel or use example file.
-""")
 
 
 ######################
 # Input scRNA-seq data (Side Panel)
 ######################
 
-st.sidebar.header('User scRNA-seq data (please upload files)')
-uploaded_file = st.sidebar.file_uploader("Choose a CSV file with scRNA-seq data", type="tsv")
+# st.sidebar.header('User scRNA-seq data (please upload files)')
+uploaded_file = st.sidebar.file_uploader("Choose a CSV/TSV file with scRNA-seq data", type="tsv")
 use_example_file = st.sidebar.checkbox(
     "Use example file", False, key='1', help="Use in-built example file to demo the app"
 )
@@ -66,12 +54,32 @@ else:
     st.write("An example file was preloaded")
     ge_matrix = './Data/LUAD-003-01-1A_gene_expression_matrix.tsv'
     ge_df = pd.read_csv(ge_matrix,sep='\t')
-    
+
+st.header('Characteristics of loaded scRNA-seq data')
+
+# st.dataframe(ge_df.sample(5).T)
 adata = sc.AnnData(ge_df)
 adata = adata.transpose()
 cell_count = adata.X.shape[0]
 gene_count = adata.X.shape[1]
-st.write('Number of cells in the data: ', cell_count)
-st.write('Number of genes in the data: ', gene_count)
+col1, col2 = st.columns(2)
+col1.metric("Number of cells", cell_count)
+col2.metric("Number of genes", gene_count)
+
 st.session_state['adata'] = adata
 st.session_state['ge_df'] = ge_df
+
+
+example_genes = list(ge_df.index)[:10]
+option = st.selectbox(
+    'Select an example gene to show the distribution',
+    example_genes,index=example_genes.index('NOC2L'))
+
+
+st.write('You selected:', option)
+if option:
+    df = ge_df.T
+    fig = px.histogram(df, x=option)
+    # fig.show()
+    # Plot!
+    st.plotly_chart(fig, use_container_width=True)
