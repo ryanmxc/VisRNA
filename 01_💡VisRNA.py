@@ -16,9 +16,11 @@ html, body, [class*="css"]  {
 }
 </style>
 """, unsafe_allow_html=True)
+image = Image.open('./images/main-page.png')
+
+st.image(image, use_column_width=True)
 
 image = Image.open('./images/Workflow.png')
-st.write("## VisRNA: interactive visualization platform of scRNA-seq data reveals key driver genes and mechanisms of non-small cell lung cancer")
 # st.write("## Visualization of tissue heterogeneity of non-small cell lung cancer by single-cell transcriptomics (VisRNA)")
 st.image(image, use_column_width=True)
 st.markdown('<div style="text-align: justify;">Lung cancer is one of the most significant causes\
