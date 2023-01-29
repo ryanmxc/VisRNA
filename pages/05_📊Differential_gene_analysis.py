@@ -39,8 +39,9 @@ deg_button = st.button("Run DEG analysis") # Give button a variable name
 if deg_button: # Make button a condition.
     st.text("Click button to run start DEG analysis")
     sc.tl.rank_genes_groups(adata, 'leiden', groups='all', reference='2', method='wilcoxon', key_added = "wilcoxon")
-    sc.pl.rank_genes_groups(adata, n_genes=20, sharey=False, key="wilcoxon")
-    sc.tl.rank_genes_groups(adata, groupby="leiden", n_genes=ranking_n_top_genes, groups='all', reference='rest', method='logreg')
     st.text("DEG analysis result is here")
+    sc.pl.rank_genes_groups(adata, n_genes=20, sharey=False, key="wilcoxon")
+    st.pyplot()
+    sc.tl.rank_genes_groups(adata, groupby="leiden", n_genes=ranking_n_top_genes, groups='all', reference='rest', method='logreg')
     sc.pl.rank_genes_groups_dotplot(adata, n_genes=5, key="wilcoxon", groupby="leiden")
     st.pyplot()

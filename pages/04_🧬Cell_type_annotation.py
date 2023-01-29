@@ -36,11 +36,12 @@ image = Image.open('./images/cell-type-annotation.png')
 st.image(image, use_column_width=True)
 
 #Load data
+
 adata = st.session_state['adata']
 import celltypist
 from celltypist import models
 
-
+print(adata)
 st.subheader('Celltype annotation by CellTypist')
 ct_button = st.button("Click button to perform cell type annotation") # Give button a variable name
 if ct_button: # Make button a condition.
