@@ -10,7 +10,8 @@ import scipy as sp
 from matplotlib import rcParams
 import seaborn as sb
 from sklearn.cluster import KMeans
-
+import io
+import matplotlib.pyplot as plt
 st.write("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Arimo');
@@ -61,7 +62,14 @@ if pca_button: # Make button a condition.
     sc.tl.leiden(adata)
     with rc_context({'figure.figsize': (10, 10)}):
         sc.pl.pca_scatter(adata,color=["leiden"],legend_loc='on data', legend_fontsize=10)
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
         st.pyplot()
+        st.download_button(label='Download PCA result',
+                data= img,
+                file_name='PCA_result.png',
+                mime='image/png')
+        
 
 st.subheader('Visualization by UMAP')
 # t-SNE
@@ -96,14 +104,26 @@ if umap_button: # Make button a condition.
     with rc_context({'figure.figsize': (10, 10)}):
     # Plot
         sc.pl.umap(adata, color=["louvain"],legend_loc='on data', legend_fontsize=10)
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
         st.pyplot()
+        st.download_button(label='Download UMAP result with louvain clustering',
+                data= img,
+                file_name='UMAP_result_louvain.png',
+                mime='image/png')
     # Leiden clustering
     st.write('UMAP visualization with Leiden clustering')
     sc.tl.leiden(adata)
     # Plot
     with rc_context({'figure.figsize': (10, 10)}):
         sc.pl.umap(adata, color=["leiden"],legend_loc='on data', legend_fontsize=10)
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
         st.pyplot()
+        st.download_button(label='Download UMAP result with leiden clustering',
+                data= img,
+                file_name='UMAP_result_leiden.png',
+                mime='image/png')
 
 st.subheader('Visualization by t-SNE')
 
@@ -122,6 +142,12 @@ if tsne_button: # Make button a condition.
     adata.obs['kmeans'] = kmeans.labels_.astype(str)
     with rc_context({'figure.figsize': (10, 10)}):
         st.text("t-SNE analysis result is here")
-        fig = sc.pl.tsne(adata, color=["kmeans"],legend_loc='on data', legend_fontsize=10)
+        sc.pl.tsne(adata, color=["kmeans"],legend_loc='on data', legend_fontsize=10)
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
         st.pyplot()
+        st.download_button(label='Download t-SNE result',
+                data= img,
+                file_name='tsne_result.png',
+                mime='image/png')
 st.session_state['adata'] = adata

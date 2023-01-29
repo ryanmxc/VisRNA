@@ -17,6 +17,8 @@ import pandas as pd
 import scanpy as sc
 from anndata import AnnData
 from matplotlib.pyplot import rc_context
+import io
+import matplotlib.pyplot as plt
 
 st.write("""
 <style>
@@ -53,4 +55,10 @@ if ct_button: # Make button a condition.
    with rc_context({'figure.figsize': (10, 10)}):
       st.text("Celltype annotation result is here")
       sc.pl.umap(adata, color = ['majority_voting'], legend_loc = 'on data')
+      img = io.BytesIO()
+      plt.savefig(img, format='png')
       st.pyplot()
+      st.download_button(label='Download annotation result',
+               data= img,
+               file_name='annotation_result.png',
+               mime='image/png')

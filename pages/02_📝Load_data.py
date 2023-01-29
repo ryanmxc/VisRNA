@@ -35,6 +35,7 @@ use_example_file = st.sidebar.checkbox(
     "Use example file", False, key='1', help="Use in-built example file to demo the app"
 )
 
+
 # If CSV is not uploaded and checkbox is filled, use values from the example file
 # and pass them down to the next if block
 
@@ -54,6 +55,16 @@ else:
     st.write("An example file was preloaded")
     ge_matrix = './Data/example_data.tsv'
     ge_df = pd.read_csv(ge_matrix,sep='\t',index_col=0)
+
+# Download example file
+with open('./Data/example_data.tsv', 'rb') as f:
+    s = f.read()
+st.sidebar.download_button(
+    label="Download example file",
+    data=s,
+    file_name='example_data.tsv',
+    # mime='tsv',
+)
 
 st.header('Characteristics of loaded scRNA-seq data')
 
