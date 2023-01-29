@@ -137,7 +137,7 @@ divergence.</div>', unsafe_allow_html=True)
 tsne_button = st.button("Click button to run t-SNE analysis") # Give button a variable name
 if tsne_button: # Make button a condition.
     st.text("Start t-SNE analysis")
-    sc.tl.tsne(adata, n_pcs=tsne_n_pcs)
+    sc.tl.tsne(adata, n_pcs=tsne_n_pcs,use_rep='X')
     kmeans = KMeans(n_clusters=18, random_state=0).fit(adata.obsm['X_pca'])
     adata.obs['kmeans'] = kmeans.labels_.astype(str)
     with rc_context({'figure.figsize': (10, 10)}):
