@@ -58,3 +58,12 @@ if deg_button: # Make button a condition.
       data= img,
       file_name='deg_result_2.png',
       mime='image/png')
+   sc.tl.rank_genes_groups(adata, 'majority_voting')
+   sc.pl.rank_genes_groups_heatmap(adata, n_genes=5, key="wilcoxon", groupby="majority_voting", show_gene_labels=True)
+   img = io.BytesIO()
+   plt.savefig(img, format='png')
+   st.pyplot()
+   st.download_button(label='Download DEG result (part 3)',
+      data= img,
+      file_name='deg_result_3.png',
+      mime='image/png')
