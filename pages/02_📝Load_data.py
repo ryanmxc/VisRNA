@@ -48,16 +48,15 @@ if uploaded_file is not None:
 elif use_example_file:
     st.write("An example file was loaded")
     ge_matrix = './Data/example_data.tsv'
-    ge_df = pd.read_csv(ge_matrix,sep='\t')
+    ge_df = pd.read_csv(ge_matrix,sep='\t',index_col=0)
  
 else:
     st.write("An example file was preloaded")
     ge_matrix = './Data/example_data.tsv'
-    ge_df = pd.read_csv(ge_matrix,sep='\t')
+    ge_df = pd.read_csv(ge_matrix,sep='\t',index_col=0)
 
 st.header('Characteristics of loaded scRNA-seq data')
 
-# st.dataframe(ge_df.sample(5).T)
 adata = sc.AnnData(ge_df)
 adata = adata.transpose()
 cell_count = adata.X.shape[0]
@@ -73,13 +72,11 @@ st.session_state['ge_df'] = ge_df
 example_genes = list(ge_df.index)[:10]
 option = st.selectbox(
     'Select an example gene to show the distribution',
-    example_genes,index=example_genes.index('NOC2L'))
+    example_genes)
 
 
 st.write('You selected:', option)
 if option:
     df = ge_df.T
     fig = px.histogram(df, x=option)
-    # fig.show()
-    # Plot!
     st.plotly_chart(fig, use_container_width=True)
